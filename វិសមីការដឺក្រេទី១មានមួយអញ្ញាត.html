@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិសមីការដឺក្រេទី១ ពេញលេញ - ឃុត ច័ន្ទនុត</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Freehand&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; --success: #16a34a; --error: #dc2626; --bg: #f8fafc; }
+        body { font-family: 'Kantumruy Pro', sans-serif; background: var(--bg); color: #1e293b; margin: 0; padding: 0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 60px 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { margin: 0; font-size: 2.5em; }
+        .author { font-family: 'Freehand', cursive; font-size: 2em; color: #fde047; margin-top: 10px; }
+        
+        .container { max-width: 1100px; margin: 30px auto; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; }
+        
+        .tabs { display: flex; background: #f1f5f9; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
+        .tab-btn { flex: 1; padding: 20px; border: none; cursor: pointer; font-weight: bold; font-family: inherit; font-size: 1.1em; transition: 0.3s; background: transparent; color: #64748b; }
+        .tab-btn:hover { background: #e2e8f0; color: var(--primary); }
+        .tab-btn.active { background: white; color: var(--accent); border-bottom: 4px solid var(--accent); }
+        
+        .tab-content { display: none; padding: 50px; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+
+        /* Typography & Layout */
+        h2 { color: var(--accent); border-left: 6px solid #f59e0b; padding-left: 15px; margin-top: 40px; }
+        h3 { color: #334155; margin-top: 25px; }
+        .highlight-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 25px; margin: 20px 0; }
+        .warning-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 25px; margin: 20px 0; border-left: 6px solid var(--error); }
+        .rule-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 25px; margin: 20px 0; border-left: 6px solid var(--success); }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #cbd5e1; padding: 15px; text-align: left; }
+        th { background: #f1f5f9; color: var(--primary); text-align: center; }
+
+        /* Quiz UI */
+        .score-board { 
+            position: sticky; top: 65px; background: white; padding: 15px 25px; 
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 30px; border: 2px solid var(--accent); z-index: 99;
+        }
+        .score-board h3 { margin: 0; color: var(--accent); }
+        .score-text { font-size: 1.5em; font-weight: bold; color: var(--success); }
+
+        .quiz-container { display: flex; flex-direction: column; gap: 30px; }
+        .question-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; background: #fff; }
+        .q-text { font-size: 1.25em; font-weight: bold; margin-bottom: 25px; color: var(--primary); }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .option-btn {
+            background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 8px; padding: 15px;
+            cursor: pointer; text-align: left; transition: 0.2s; font-family: inherit; font-size: 1.1em; color: #334155;
+        }
+        .option-btn:hover:not(:disabled) { border-color: var(--accent); background: #eff6ff; }
+        .option-btn.correct { background: var(--success) !important; color: white !important; border-color: var(--success); }
+        .option-btn.wrong { background: var(--error) !important; color: white !important; border-color: var(--error); }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+
+        .feedback { margin-top: 20px; font-weight: bold; font-size: 1.2em; display: none; }
+        .solution-box {
+            margin-top: 20px; padding: 20px; background: #fffbeb; border-left: 6px solid #f59e0b;
+            border-radius: 8px; display: none; font-size: 1.1em;
+        }
+        .solution-title { font-weight: bold; color: #d97706; margin-bottom: 10px; }
+
+        /* Number Line CSS */
+        .nl-container { position: relative; width: 100%; height: 80px; margin-top: 20px; display: flex; align-items: center; justify-content: center; }
+        .nl-line { position: absolute; width: 80%; height: 4px; background: #94a3b8; }
+        .nl-arrow-left, .nl-arrow-right { position: absolute; top: 50%; transform: translateY(-50%); border: solid #94a3b8; border-width: 0 4px 4px 0; padding: 6px; }
+        .nl-arrow-right { right: 10%; transform: translateY(-50%) rotate(-45deg); }
+        .nl-arrow-left { left: 10%; transform: translateY(-50%) rotate(135deg); }
+        .nl-tick { position: absolute; width: 4px; height: 16px; background: #334155; top: 50%; transform: translateY(-50%); z-index: 2; left: 50%; }
+        .nl-label { position: absolute; top: calc(50% + 15px); left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 1.2em; color: var(--primary); }
+        .nl-shade { position: absolute; height: 12px; background: rgba(37, 99, 235, 0.4); top: 50%; transform: translateY(-50%); }
+        .nl-circle { position: absolute; width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--accent); top: 50%; transform: translate(-50%, -50%); z-index: 3; left: 50%; }
+        .nl-circle.open { background: white; }
+        .nl-circle.closed { background: var(--accent); }
+
+        footer { text-align: center; padding: 40px; background: var(--primary); color: white; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>មេរៀន៖ វិសមីការដឺក្រេទី១មានមួយអញ្ញាត</h1>
+    <div class="author">រៀបរៀងដោយ៖ ឃុត ច័ន្ទនុត</div>
+</header>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('lesson')">១. មេរៀនលម្អិត</button>
+        <button class="tab-btn" onclick="showTab('summary')">២. មេរៀនសង្ខេប</button>
+        <button class="tab-btn" onclick="showTab('quiz')">៣. លំហាត់អនុវត្តចម្រុះ (១៥០លំហាត់)</button>
+    </div>
+
+    <div id="lesson" class="tab-content active">
+        <h2>១. និយមន័យវិសមីការ</h2>
+        <p><b>វិសមីការ</b> គឺជាវិសមភាពដែលមានផ្ទុកអញ្ញាត។ ការដោះស្រាយវិសមីការ គឺការរកសំណុំតម្លៃទាំងអស់នៃអញ្ញាត ដែលធ្វើឲ្យវិសមភាពនោះផ្ទៀងផ្ទាត់ (ពិត)។</p>
+        <div class="highlight-box">
+            <b>និយមន័យ៖</b> វិសមីការដឺក្រេទី១មានមួយអញ្ញាត គឺជាវិសមីការដែលអាចបំប្លែងទៅជាទម្រង់ទូទៅបានដូចជា៖
+            <div style="text-align: center; font-size: 1.5em; margin: 15px 0;">
+                \( ax + b > 0 \) , &nbsp; \( ax + b < 0 \) , &nbsp; \( ax + b \geq 0 \) , &nbsp; ឬ &nbsp; \( ax + b \leq 0 \)
+            </div>
+            ដែលក្នុងនោះ៖
+            <ul>
+                <li>\( x \) ហៅថា <b>អញ្ញាត</b>។</li>
+                <li>\( a \) និង \( b \) គឺជាចំនួនពិតដែលគេស្គាល់ ហើយ \( a \neq 0 \)។</li>
+            </ul>
+        </div>
+
+        <h2>២. វិធាននៃការដោះស្រាយវិសមីការ</h2>
+        <h3>ក. វិធានបូក និង ដក</h3>
+        <div class="rule-box">
+            បើយើងបូក ឬ ដក អង្គទាំងពីរនៃវិសមីការជាមួយចំនួនតែមួយ នោះយើងបានវិសមីការថ្មីមួយដែលមានទិសដៅ<b>ដដែល</b>។<br>
+            <i>ឧទាហរណ៍៖</i> បើ \( a < b \) នោះ \( a + c < b + c \)
+        </div>
+
+        <h3>ខ. វិធានគុណ និង ចែក (សំខាន់បំផុត!)</h3>
+        <div class="warning-box">
+            <b>ករណីទី១ (គុណ/ចែក នឹងចំនួនវិជ្ជមាន):</b> ទិសដៅវិសមភាពរក្សាទុកដដែល។<br>
+            <b>ករណីទី២ (គុណ/ចែក នឹងចំនួនអវិជ្ជមាន):</b> <b>ត្រូវតែប្ដូរទិសដៅវិសមភាព!</b><br>
+            បើ \( a < b \) និង \( c < 0 \) នោះ \( a \cdot c > b \cdot c \) និង \( \dfrac{a}{c} > \dfrac{b}{c} \)
+        </div>
+    </div>
+
+    <div id="summary" class="tab-content">
+        <h2>២. មេរៀនសង្ខេប</h2>
+        <div class="warning-box">
+            <b>ការប្ដូរសញ្ញា៖</b> ចាំបាច់ត្រូវប្ដូរទិសដៅវិសមភាព (< ទៅ >, ឬ \(\leq\) ទៅ \(\geq\)) <b>តែនៅពេលដែល</b> អ្នកគុណ ឬ ចែកអង្គទាំងពីរនឹងចំនួន<b>អវិជ្ជមាន ($-$)</b> ប៉ុណ្ណោះ។
+        </div>
+        <div class="highlight-box">
+            <b>សញ្ញា និងបន្ទាត់ចំនួន៖</b>
+            <ul>
+                <li>\( > \) ឬ \( < \) : រង្វង់ប្រហោង \(\circ\) (មិនយកតម្លៃស្មើ)។</li>
+                <li>\( \geq \) ឬ \( \leq \) : រង្វង់ជិត \(\bullet\) (យកតម្លៃស្មើ)។</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="quiz" class="tab-content">
+        <div class="score-board">
+            <h3>ពិន្ទុសរុបរបស់អ្នក៖</h3>
+            <div class="score-text"><span id="currentScore">0</span> / <span id="totalQuestions">150</span></div>
+        </div>
+        <div class="highlight-box" style="margin-bottom: 25px;">
+            <b>💡 ចំណាំ៖</b> លំហាត់ទាំង ១៥០ ខាងក្រោមត្រូវបានបង្កើតឡើងដោយស្វ័យប្រវត្តិ និងមានភាពចម្រុះរួមមាន៖ ទម្រង់ធម្មតា, ទម្រង់ប្រភាគ, និងទម្រង់ដែលមានអញ្ញាតសងខាង។
+        </div>
+        <div id="quiz-body" class="quiz-container">
+            </div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 រៀបរៀងដោយ៖ ឃុត ច័ន្ទនុត។ រក្សាសិទ្ធិគ្រប់យ៉ាង។
+</footer>
+
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // --- Helper Functions ---
+    function flipOp(op) {
+        if(op === '>') return '<';
+        if(op === '<') return '>';
+        if(op === '\\geq') return '\\leq';
+        if(op === '\\leq') return '\\geq';
+        return op;
+    }
+
+    function formatTerm(coef, isFirst) {
+        if (coef === 1) return isFirst ? 'x' : '+ x';
+        if (coef === -1) return isFirst ? '-x' : '- x';
+        if (isFirst) return coef + 'x';
+        return coef > 0 ? `+ ${coef}x` : `- ${Math.abs(coef)}x`;
+    }
+
+    function formatNum(num, isFirst) {
+        if (num === 0 && !isFirst) return '';
+        if (isFirst) return num.toString();
+        return num > 0 ? `+ ${num}` : `- ${Math.abs(num)}`;
+    }
+
+    // --- ប្រព័ន្ធបង្កើតលំហាត់ចម្រុះ ---
+    function generateDiverseMathQuestions(total) {
+        const ops = ['>', '<', '\\geq', '\\leq'];
+        const nlTypes = ['>', '<', '>=', '<='];
+        let generatedQuestions = [];
+
+        for (let i = 0; i < total; i++) {
+            let type = Math.floor(Math.random() * 4); // 0: Normal, 1: Frac Var, 2: Frac Denom, 3: Both sides
+            let correctOpIdx = Math.floor(Math.random() * 4);
+            let correctOp = ops[correctOpIdx];
+            let correctNlType = nlTypes[correctOpIdx];
+            
+            let qStr, steps = [], ans;
+            
+            // ជ្រើសរើសចម្លើយចុងក្រោយជាចំនួនគត់ (ពី -10 ដល់ 10)
+            ans = Math.floor(Math.random() * 21) - 10;
+
+            if (type === 0) {
+                // ប្រភេទទី១៖ ax + b op c
+                let a = 0; while(a===0) a = Math.floor(Math.random()*19)-9;
+                let b = Math.floor(Math.random()*21)-10;
+                let c = a * ans + b;
+                let qOp = a < 0 ? flipOp(correctOp) : correctOp;
+
+                qStr = `\\( ${formatTerm(a, true)} ${formatNum(b, false)} ${qOp} ${c} \\)`;
+                
+                if (b !== 0) steps.push(`\\( ${formatTerm(a, true)} ${qOp} ${c} ${formatNum(-b, false)} \\)`);
+                steps.push(`\\( ${formatTerm(a, true)} ${qOp} ${c - b} \\)`);
+                steps.push(`\\( x ${correctOp} \\dfrac{${c - b}}{${a}} \\)` + (a < 0 ? " <span style='color:var(--error);'>(ចែកនឹងចំនួនអវិជ្ជមាន ត្រូវប្ដូរសញ្ញា)</span>" : ""));
+                
+            } else if (type === 1) {
+                // ប្រភេទទី២៖ x/a + b op c (ប្រភាគ)
+                let a = 0; while(a===0 || Math.abs(a)===1) a = Math.floor(Math.random()*9)-4;
+                let k = Math.floor(Math.random()*11)-5;
+                ans = k * a; // ធានាថា k = ans/a ជាចំនួនគត់
+                let b = Math.floor(Math.random()*21)-10;
+                let c = k + b;
+                let qOp = a < 0 ? flipOp(correctOp) : correctOp;
+
+                qStr = `\\( \\dfrac{x}{${a}} ${formatNum(b, false)} ${qOp} ${c} \\)`;
+                
+                if (b !== 0) steps.push(`\\( \\dfrac{x}{${a}} ${qOp} ${c} ${formatNum(-b, false)} \\)`);
+                steps.push(`\\( \\dfrac{x}{${a}} ${qOp} ${c - b} \\)`);
+                steps.push(`\\( x ${correctOp} ${c - b} \\times (${a}) \\)` + (a < 0 ? " <span style='color:var(--error);'>(ប្ដូរសញ្ញា)</span>" : ""));
+                
+            } else if (type === 2) {
+                // ប្រភេទទី៣៖ (x + b)/a op c (ភាគយកវែង)
+                let a = 0; while(a===0 || Math.abs(a)===1) a = Math.floor(Math.random()*9)-4;
+                let c = Math.floor(Math.random()*11)-5;
+                let b = a * c - ans;
+                let qOp = a < 0 ? flipOp(correctOp) : correctOp;
+
+                qStr = `\\( \\dfrac{x ${formatNum(b, false)}}{${a}} ${qOp} ${c} \\)`;
+                
+                steps.push(`\\( x ${formatNum(b, false)} ${qOp} ${c} \\times (${a}) \\)` + (a < 0 ? " <span style='color:var(--error);'>(ប្ដូរសញ្ញា)</span>" : ""));
+                steps.push(`\\( x ${formatNum(b, false)} ${correctOp} ${a * c} \\)`);
+                if (b !== 0) steps.push(`\\( x ${correctOp} ${a * c} ${formatNum(-b, false)} \\)`);
+
+            } else {
+                // ប្រភេទទី៤៖ ax + b op cx + d (អញ្ញាតសងខាង)
+                let deltaA = 0; while(deltaA===0 || Math.abs(deltaA)===1) deltaA = Math.floor(Math.random()*9)-4;
+                let c_val = Math.floor(Math.random()*9)-4; if(c_val===0) c_val = 2;
+                let a = c_val + deltaA;
+                let d = Math.floor(Math.random()*21)-10;
+                let b = d - deltaA * ans;
+                let qOp = deltaA < 0 ? flipOp(correctOp) : correctOp;
+
+                qStr = `\\( ${formatTerm(a, true)} ${formatNum(b, false)} ${qOp} ${formatTerm(c_val, true)} ${formatNum(d, false)} \\)`;
+                
+                steps.push(`\\( ${formatTerm(a, true)} ${formatTerm(-c_val, false)} ${qOp} ${d} ${formatNum(-b, false)} \\)`);
+                steps.push(`\\( ${formatTerm(deltaA, true)} ${qOp} ${d - b} \\)`);
+                steps.push(`\\( x ${correctOp} \\dfrac{${d - b}}{${deltaA}} \\)` + (deltaA < 0 ? " <span style='color:var(--error);'>(ប្ដូរសញ្ញា)</span>" : ""));
+            }
+
+            steps.push(`\\( x ${correctOp} ${ans} \\)`);
+            let solutionHTML = `<b>ដំណោះស្រាយ៖</b><br>${qStr}<br>` + steps.join('<br>');
+
+            // បង្កើតជម្រើសចម្លើយ
+            let wrongOp = (correctOp === '>' || correctOp === '\\geq') ? '<' : '>';
+            let wrongOpEq = (correctOp === '\\geq' || correctOp === '\\leq') ? (correctOp === '\\geq' ? '\\leq' : '\\geq') : wrongOp;
+            
+            let options = [
+                `\\( x ${correctOp} ${ans} \\)`,
+                `\\( x ${wrongOpEq} ${ans} \\)`,
+                `\\( x ${correctOp} ${ans + (Math.random()>0.5?2:-2)} \\)`,
+                `\\( x ${wrongOpEq} ${ans - 1} \\)`
+            ];
+
+            let correctOptStr = options[0];
+            options = options.sort(() => Math.random() - 0.5); // ច្របល់
+            let correctIdx = options.indexOf(correctOptStr);
+
+            generatedQuestions.push({
+                q: qStr,
+                options: options,
+                correct: correctIdx,
+                solution: solutionHTML,
+                nlType: correctNlType,
+                nlValue: ans
+            });
+        }
+        return generatedQuestions;
+    }
+
+    const questions = generateDiverseMathQuestions(150);
+    let score = 0;
+
+    // Render Quiz to DOM
+    window.onload = function() {
+        const quizBody = document.getElementById('quiz-body');
+        let htmlBuffer = "";
+        
+        questions.forEach((q, qIndex) => {
+            let optionsHtml = q.options.map((opt, oIndex) => 
+                `<button class="option-btn" onclick="checkAnswer(${qIndex}, ${oIndex}, this)">${opt}</button>`
+            ).join('');
+
+            htmlBuffer += `
+                <div class="question-card" id="qcard-${qIndex}">
+                    <div class="q-text">លំហាត់ទី ${qIndex + 1}៖ ដោះស្រាយវិសមីការ ${q.q}</div>
+                    <div class="options-grid">${optionsHtml}</div>
+                    <div id="feedback-${qIndex}" class="feedback"></div>
+                    <div id="solution-${qIndex}" class="solution-box">
+                        <div class="solution-title">ដំណោះស្រាយលម្អិត៖</div>
+                        <div>${q.solution}</div>
+                        <div class="solution-title" style="margin-top:15px;">បន្ទាត់ចំនួន៖</div>
+                        ${generateNumberLine(q.nlType, q.nlValue)}
+                    </div>
+                </div>
+            `;
+        });
+        
+        quizBody.innerHTML = htmlBuffer;
+        
+        // Render MathJax after DOM injection
+        if (window.MathJax) {
+            MathJax.typesetPromise().catch((err) => console.log(err.message));
+        }
+    };
+
+    function generateNumberLine(type, value) {
+        let shadeSide = (type === '>' || type === '>=') ? 'left: 50%; width: 40%;' : 'left: 10%; width: 40%;';
+        let circleClass = (type === '>=' || type === '<=') ? 'closed' : 'open';
+        return `
+        <div class="nl-container">
+            <div class="nl-line"></div>
+            <div class="nl-arrow-left"></div>
+            <div class="nl-arrow-right"></div>
+            <div class="nl-shade" style="${shadeSide}"></div>
+            <div class="nl-tick"></div>
+            <div class="nl-circle ${circleClass}"></div>
+            <div class="nl-label">${value}</div>
+        </div>`;
+    }
+
+    function checkAnswer(qIndex, selectedIndex, btnElement) {
+        const q = questions[qIndex];
+        const card = document.getElementById(`qcard-${qIndex}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        const feedback = document.getElementById(`feedback-${qIndex}`);
+        const solution = document.getElementById(`solution-${qIndex}`);
+
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (selectedIndex === q.correct) {
+            btnElement.classList.add('correct');
+            feedback.innerHTML = '🎉 ចម្លើយត្រឹមត្រូវ!';
+            feedback.style.color = 'var(--success)';
+            score++;
+            document.getElementById('currentScore').innerText = score;
+        } else {
+            btnElement.classList.add('wrong');
+            buttons[q.correct].classList.add('correct');
+            feedback.innerHTML = '❌ ចម្លើយខុស! សូមពិនិត្យមើលដំណោះស្រាយខាងក្រោម។';
+            feedback.style.color = 'var(--error)';
+            solution.style.display = 'block';
+        }
+        feedback.style.display = 'block';
+    }
+</script>
+</body>
+</html>
